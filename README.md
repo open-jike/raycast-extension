@@ -1,0 +1,1 @@
+# OpenJike Raycast Extension
