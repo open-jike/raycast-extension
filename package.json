@@ -23,6 +23,12 @@
       "title": "Post",
       "description": "Create a new post",
       "mode": "view"
+    },
+    {
+      "name": "user-list",
+      "title": "User List",
+      "description": "List all users",
+      "mode": "view"
     }
   ],
   "scripts": {
@@ -37,7 +43,7 @@
   },
   "dependencies": {
     "@raycast/api": "^1.35.1",
-    "jike-sdk": "^0.19.0"
+    "jike-sdk": "^0.19.1"
   },
   "devDependencies": {
     "@sxzz/eslint-config-prettier": "^2.2.1",

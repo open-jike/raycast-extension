@@ -7,7 +7,7 @@ specifiers:
   '@types/node': '*'
   '@types/react': ^17.0.45
   eslint: ^8.16.0
-  jike-sdk: ^0.19.0
+  jike-sdk: ^0.19.1
   react: ^17.0.2
   react-dom: ^17.0.2
   react-reconciler: 0.26.2
@@ -15,7 +15,7 @@ specifiers:
 
 dependencies:
   '@raycast/api': 1.35.1_tukjjfb4rprfgimkxtozpinwgq
-  jike-sdk: 0.19.0
+  jike-sdk: 0.19.1
 
 devDependencies:
   '@sxzz/eslint-config-prettier': 2.2.1_eslint@8.16.0
@@ -1386,8 +1386,8 @@ packages:
     resolution: {integrity: sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=}
     dev: true
 
-  /jike-sdk/0.19.0:
-    resolution: {integrity: sha512-Jdit5ro3cUwauXpNkQNPGz2QTw+hBv1LZaRhHuIOMH5yvVxHlzGXbnF8y7zonJM+ADCNuifQlcGMwyeBiynt8w==}
+  /jike-sdk/0.19.1:
+    resolution: {integrity: sha512-iCTQTbnEwcXnyzVH1GkiiNHPdLzP1Jbf9hoErkFqxpM99RYi7SC0JEN+oS04LycuhyRamJA9KQEz9FZekWxUKg==}
     engines: {node: '>=14.19.0'}
     dependencies:
       eventemitter3: 4.0.7
