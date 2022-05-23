@@ -1,5 +1,5 @@
 import { ActionPanel, Detail } from '@raycast/api'
-import { loginNewUser } from '../actions/user'
+import { LoginNewUser } from '../components/actions/user'
 
 export function NoUser() {
   const contents = `
@@ -11,7 +11,11 @@ export function NoUser() {
     <Detail
       markdown={contents}
       navigationTitle="未登录账号"
-      actions={<ActionPanel>{loginNewUser}</ActionPanel>}
+      actions={
+        <ActionPanel>
+          <LoginNewUser />
+        </ActionPanel>
+      }
     />
   )
 }

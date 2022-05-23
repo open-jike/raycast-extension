@@ -3,22 +3,22 @@ import {
   Action,
   ActionPanel,
   Icon,
-  Image,
   List,
   Toast,
   confirmAlert,
   showToast,
 } from '@raycast/api'
 import { handleError } from '../utils/errors'
-import { openProfile } from '../actions/user'
+import { OpenProfile } from '../components/actions/user'
 import { useUser } from '../hooks/user'
+import { pictureWithCircle } from '../utils/icon'
 import type { ReactNode } from 'react'
 import type { Entity } from 'jike-sdk'
 import type { ConfigUser } from '../utils/config'
 
 export interface UserDetailProps {
   user: ConfigUser
-  actions: ReactNode[]
+  actions: ReactNode
   onRefresh: () => void
 }
 
@@ -60,7 +60,7 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
   }
 
   const itemActions = (user: ConfigUser) => [
-    ...openProfile(user.username),
+    <OpenProfile username={user.username} />,
 
     <Action
       key="refresh"
@@ -132,16 +132,14 @@ ${profile.bio}
   return (
     <List.Item
       key={user.userId}
-      icon={{
-        source:
-          profile?.avatarImage.thumbnailUrl || user.avatarImage || Icon.Person,
-        mask: Image.Mask.Circle,
-      }}
+      icon={pictureWithCircle(
+        profile?.avatarImage.thumbnailUrl || user.avatarImage || Icon.Person
+      )}
       title={user.screenName || user.screenName}
       actions={
         <ActionPanel>
           {...itemActions(user)}
-          {...actions}
+          {actions}
         </ActionPanel>
       }
       detail={

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ActionPanel, List } from '@raycast/api'
 import { useUsers } from '../hooks/user'
-import { loginNewUser } from '../actions/user'
+import { LoginNewUser } from '../components/actions/user'
 import { UserDetail } from './user-detail'
 
 export function UserList() {
@@ -17,14 +17,14 @@ export function UserList() {
     setLoading(!ready)
   }, [ready])
 
-  const actions = [loginNewUser]
+  const actions = <LoginNewUser />
 
   return (
     <List
       isLoading={loading}
       isShowingDetail={users.length > 0}
       navigationTitle="用户列表"
-      actions={<ActionPanel>{...actions}</ActionPanel>}
+      actions={<ActionPanel>{actions}</ActionPanel>}
     >
       {users.map((user) => (
         <UserDetail

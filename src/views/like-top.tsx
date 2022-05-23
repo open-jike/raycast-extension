@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { UserSelect } from '../components/user-select'
 import { useUser, useUsers } from '../hooks/user'
 import { handleError } from '../utils/errors'
-import { openProfile } from '../actions/user'
+import { OpenProfile } from '../components/actions/user'
 import { NoUser } from './no-user'
 import type { Entity, JikePostWithDetail } from 'jike-sdk'
 
@@ -150,7 +150,7 @@ function LikeTopResult({ userId, topCount, postCount }: LikeTopForm) {
           accessories={[renderRanking(getRanking(count))]}
           actions={
             <ActionPanel>
-              {...openProfile(user.username)}
+              <OpenProfile username={user.username} />
               <Action.CopyToClipboard
                 title="复制昵称"
                 content={user.screenName}

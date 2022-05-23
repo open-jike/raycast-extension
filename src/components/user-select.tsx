@@ -1,5 +1,6 @@
-import { Form, Icon, Image } from '@raycast/api'
+import { Form, Icon } from '@raycast/api'
 import { useUsers } from '../hooks/user'
+import { pictureWithCircle } from '../utils/icon'
 import type { ConfigUser } from '../utils/config'
 
 export function UserSelect({
@@ -20,10 +21,7 @@ export function UserSelect({
     <Form.Dropdown id="userId" title="用户" onChange={handleChange} {...props}>
       {users.map((user) => (
         <Form.Dropdown.Item
-          icon={{
-            source: user.avatarImage || Icon.Person,
-            mask: Image.Mask.Circle,
-          }}
+          icon={pictureWithCircle(user.avatarImage || Icon.Person)}
           key={user.userId}
           title={user.screenName}
           value={user.userId}
