@@ -44,7 +44,6 @@ export function Feeds() {
     Awaited<ReturnType<JikeClient['queryFollowingUpdates']>>
   >([])
   const [lastKeys, setLastKeys] = useState<FollowingUpdatesMoreKey[]>([])
-  console.log(lastKeys)
 
   const fetchFeeds = async () => {
     if (!client) return
@@ -108,6 +107,7 @@ export function Feeds() {
     <FeedsContext.Provider value={context}>
       <List
         isLoading={loading}
+        navigationTitle="动态"
         isShowingDetail={updates.length > 0}
         searchBarAccessory={userList}
       >
@@ -192,7 +192,7 @@ const OriginalPost = ({ post }: { post: JikePostWithDetail }) => {
       .replaceAll(/([!#()*+.[\\\]_`{}-])/g, `\\$1`)}
 
 ${post.detail.pictures
-  ?.map((picture) => `![图片](${picture.middlePicUrl})`)
+  ?.map((picture: Entity.Picture) => `![图片](${picture.middlePicUrl})`)
   .join('\n\n')}`,
     [post.detail.content, post.detail.pictures]
   )
