@@ -134,7 +134,7 @@ function LikeTopResult({ userId, topCount, postCount }: LikeTopForm) {
       case 3:
         return { icon: '🥉' }
       default:
-        return { text: String(rank) }
+        return { text: `#${rank}` }
     }
   }
   return (
