@@ -7,18 +7,13 @@ import {
   useNavigation,
 } from '@raycast/api'
 import { ApiOptions, JikeClient } from 'jike-sdk'
-import { useEffect, useState } from 'react'
-import { getConfig } from '../utils/config'
 import { handleError } from '../utils/errors'
-import type { ConfigUser } from '../utils/config'
+import { useUsers } from '../hooks/user'
+import { UserSelect } from '../components/user-select'
 
 export function Post() {
   const { pop } = useNavigation()
-  const [users, setUsers] = useState<ConfigUser[]>([])
-
-  useEffect(() => {
-    getConfig().then((cfg) => setUsers(cfg.users))
-  }, [])
+  const { findUser } = useUsers()
 
   const submit = async ({
     userId,
@@ -35,7 +30,7 @@ export function Post() {
       return
     }
 
-    const user = users.find((u) => u.userId === userId)!
+    const user = findUser(userId)!
     const client = JikeClient.fromJSON(user)
     try {
       await client.createPost(ApiOptions.PostType.ORIGINAL, content)
@@ -60,15 +55,7 @@ export function Post() {
         </ActionPanel>
       }
     >
-      <Form.Dropdown id="userId" title="用户">
-        {users.map((user) => (
-          <Form.Dropdown.Item
-            key={user.userId}
-            title={user.screenName}
-            value={user.userId}
-          />
-        ))}
-      </Form.Dropdown>
+      <UserSelect />
 
       <Form.TextArea
         id="content"

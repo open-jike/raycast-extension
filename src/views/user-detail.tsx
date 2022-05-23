@@ -6,13 +6,13 @@ import {
   List,
   Toast,
   confirmAlert,
-  showHUD,
   showToast,
 } from '@raycast/api'
 import { JikeClient } from 'jike-sdk'
 import { handleError } from '../utils/errors'
 import { updateConfig } from '../utils/config'
 import { findUser } from '../utils/user'
+import { openProfile } from '../actions/user'
 import type { ConfigUser } from '../utils/config'
 import type { ReactNode } from 'react'
 import type { Entity } from 'jike-sdk'
@@ -69,30 +69,7 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
   }
 
   const itemActions = (user: ConfigUser) => [
-    <Action.OpenInBrowser
-      key="open"
-      title="打开用户页 (macOS App)"
-      icon="📲"
-      url={`jike://page.jk/user/${user.username}`}
-      onOpen={() => showHUD('已打开')}
-    />,
-
-    <ActionPanel.Submenu
-      key="openWith"
-      title="打开用户页 (通过其他客户端)"
-      icon={Icon.Window}
-    >
-      <Action.OpenInBrowser
-        title="PC Web 端"
-        url={`https://web.okjike.com/u/${user.username}`}
-        onOpen={() => showHUD('已打开')}
-      />
-      <Action.OpenInBrowser
-        title="手机 Web 端"
-        url={`https://m.okjike.com/users/${user.username}`}
-        onOpen={() => showHUD('已打开')}
-      />
-    </ActionPanel.Submenu>,
+    ...openProfile(user.username),
 
     <Action
       key="refresh"

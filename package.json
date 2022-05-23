@@ -29,6 +29,12 @@
       "title": "User List",
       "description": "List all users",
       "mode": "view"
+    },
+    {
+      "name": "like-top",
+      "title": "Like Top",
+      "description": "Leaderboard of likes",
+      "mode": "view"
     }
   ],
   "scripts": {

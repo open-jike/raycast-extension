@@ -1,19 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Action, ActionPanel, Icon, List } from '@raycast/api'
-import { getConfig } from '../utils/config'
+import { useUsers } from '../hooks/user'
 import { UserDetail } from './user-detail'
 import { Login } from './login'
-import type { ConfigUser } from '../utils/config'
 
 export function UserList() {
-  const [users, setUsers] = useState<ConfigUser[]>([])
+  const { users, update } = useUsers()
   const [loading, setLoading] = useState(false)
 
   const refreshList = async () => {
     setLoading(true)
-    await getConfig()
-      .then((config) => setUsers(config.users))
-      .finally(() => setLoading(false))
+    await update().finally(() => setLoading(false))
   }
 
   useEffect(() => {
