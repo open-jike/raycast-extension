@@ -90,8 +90,13 @@ export function Feeds() {
     nextPage: () => fetchFeeds(),
   }
 
+  const onSetUser = (userId: string) => {
+    setLastKeys([])
+    setUserId(userId)
+  }
+
   const userList = (
-    <List.Dropdown tooltip="请选择用户" storeValue={true} onChange={setUserId}>
+    <List.Dropdown tooltip="请选择用户" storeValue={true} onChange={onSetUser}>
       {users.map((user) => (
         <List.Dropdown.Item
           key={user.userId}
