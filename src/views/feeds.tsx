@@ -9,29 +9,10 @@ import { LikePost, OpenPost, UnlikePost } from '../components/actions/post'
 import type { FollowingUpdatesMoreKey } from 'jike-sdk/dist/client/types'
 import type { Entity, JikeClient } from 'jike-sdk'
 
-function Pager() {
-  const { lastPage, nextPage } = useContext(FeedsContext)!
-  return (
-    <ActionPanel.Section>
-      <Action
-        icon="⬅️"
-        title="上一页"
-        shortcut={{ modifiers: ['opt'], key: 'arrowLeft' }}
-        onAction={lastPage}
-      />
-      <Action
-        icon="➡️"
-        title="下一页"
-        shortcut={{ modifiers: ['opt'], key: 'arrowRight' }}
-        onAction={nextPage}
-      />
-    </ActionPanel.Section>
-  )
-}
-
 interface FeedsCtx {
   lastPage: () => void
   nextPage: () => void
+  toLatest: () => void
 }
 
 const FeedsContext = createContext<FeedsCtx | undefined>(undefined)
@@ -44,6 +25,7 @@ export function Feeds() {
     Awaited<ReturnType<JikeClient['queryFollowingUpdates']>>
   >([])
   const [lastKeys, setLastKeys] = useState<FollowingUpdatesMoreKey[]>([])
+  const [lastKey, setLastKey] = useState<FollowingUpdatesMoreKey>(undefined)
 
   const fetchFeeds = async () => {
     if (!client) return
@@ -52,11 +34,10 @@ export function Feeds() {
     setLoading(true)
     try {
       const updates = await client.queryFollowingUpdates({
-        lastKey: lastKeys.at(-1),
+        lastKey,
         limit: limit.limitMaxCount(40),
         onDone(_, key) {
-          lastKeys.push(key)
-          setLastKeys(lastKeys)
+          setLastKeys([...lastKeys, key])
         },
       })
       setUpdates(updates)
@@ -70,7 +51,7 @@ export function Feeds() {
 
   useEffect(() => {
     fetchFeeds()
-  }, [client])
+  }, [client, lastKey])
 
   const context: FeedsCtx = {
     lastPage: () => {
@@ -82,12 +63,18 @@ export function Feeds() {
         return
       }
 
-      lastKeys.pop()
-      lastKeys.pop()
-      setLastKeys(lastKeys)
-      fetchFeeds()
+      setLastKey(lastKeys.at(-3))
+      setLastKeys(lastKeys.slice(0, -2))
     },
-    nextPage: () => fetchFeeds(),
+
+    nextPage: () => {
+      setLastKey(lastKeys.at(-1))
+    },
+
+    toLatest: () => {
+      setLastKeys([])
+      setLastKey(undefined)
+    },
   }
 
   const onSetUser = (userId: string) => {
@@ -128,6 +115,7 @@ export function Feeds() {
                   <NotSupported
                     key={(update as any).id}
                     type={(update as any).type}
+                    object={update}
                   />
                 )
             }
@@ -137,57 +125,74 @@ export function Feeds() {
   )
 }
 
-const NotSupported = ({ type }: { type: string }) => (
-  <List.Item title={`暂不支持 ${type}`} />
+const NotSupported = ({ type, object }: { type: string; object: unknown }) => (
+  <List.Item
+    title={`暂不支持 ${type}`}
+    actions={
+      <ActionPanel>
+        <Pager />
+        <CopyUpdate object={object} />
+      </ActionPanel>
+    }
+  />
 )
 
 const PersonalUpdate = ({ update }: { update: Entity.PersonalUpdate }) => {
-  if (update.action === 'USER_FOLLOW') {
-    return <UserFollow update={update} />
+  switch (update.action) {
+    case 'USER_FOLLOW':
+      return <UserInteract update={update} title="关注了即友" />
+    case 'USER_RESPECT':
+      return <UserInteract update={update} title="夸了夸即友🎉" />
+    default:
+      return <NotSupported type={update.action} object={update} />
   }
-  return <NotSupported type={update.action} />
 }
 
-const UserFollow = ({ update }: { update: Entity.PersonalUpdate }) => {
-  return (
-    <List.Item
-      icon={pictureWithCircle(update.users[0].avatarImage.thumbnailUrl)}
-      title={update.users[0].screenName}
-      subtitle="关注了即友"
-      actions={
-        <ActionPanel>
-          {update.targetUsers.map((user) => (
-            <ActionPanel.Submenu
-              key={user.id}
-              icon={pictureWithCircle(user.avatarImage.thumbnailUrl)}
-              title={`打开 ${user.screenName} 用户页`}
-            >
-              <OpenProfile username={user.username} split={false} />
-            </ActionPanel.Submenu>
-          ))}
-          <Pager />
-        </ActionPanel>
-      }
-      detail={
-        <List.Item.Detail
-          metadata={
-            <List.Item.Detail.Metadata>
-              <List.Item.Detail.Metadata.Label title="关注了即友" />
-              {update.targetUsers.map((user) => (
-                <List.Item.Detail.Metadata.Label
-                  key={user.id}
-                  icon={pictureWithCircle(user.avatarImage.thumbnailUrl)}
-                  title=""
-                  text={user.screenName}
-                />
-              ))}
-            </List.Item.Detail.Metadata>
-          }
-        />
-      }
-    />
-  )
-}
+const UserInteract = ({
+  update,
+  title,
+}: {
+  update: Entity.PersonalUpdate
+  title: string
+}) => (
+  <List.Item
+    icon={pictureWithCircle(update.users[0].avatarImage.thumbnailUrl)}
+    title={update.users[0].screenName}
+    subtitle={title}
+    actions={
+      <ActionPanel>
+        {update.targetUsers.map((user) => (
+          <ActionPanel.Submenu
+            key={user.id}
+            icon={pictureWithCircle(user.avatarImage.thumbnailUrl)}
+            title={`打开 ${user.screenName} 用户页`}
+          >
+            <OpenProfile username={user.username} split={false} />
+          </ActionPanel.Submenu>
+        ))}
+        <Pager />
+        <CopyUpdate object={update} />
+      </ActionPanel>
+    }
+    detail={
+      <List.Item.Detail
+        metadata={
+          <List.Item.Detail.Metadata>
+            <List.Item.Detail.Metadata.Label title={title} />
+            {update.targetUsers.map((user) => (
+              <List.Item.Detail.Metadata.Label
+                key={user.id}
+                icon={pictureWithCircle(user.avatarImage.thumbnailUrl)}
+                title=""
+                text={user.screenName}
+              />
+            ))}
+          </List.Item.Detail.Metadata>
+        }
+      />
+    }
+  />
+)
 
 const OriginalPost = ({ post }: { post: JikePostWithDetail }) => {
   const [liked, setLiked] = useState(post.detail.liked)
@@ -240,9 +245,63 @@ ${post.detail.pictures
           )}
           <OpenPost type={ApiOptions.PostType.ORIGINAL} id={post.id} />
           <Pager />
+          <CopyUpdate object={post.detail} />
         </ActionPanel>
       }
-      detail={<List.Item.Detail markdown={markdown} />}
+      detail={
+        <List.Item.Detail
+          markdown={markdown}
+          metadata={
+            <List.Item.Detail.Metadata>
+              {post.detail.topic && (
+                <List.Item.Detail.Metadata.Label
+                  title="圈子"
+                  icon={pictureWithCircle(
+                    post.detail.topic.squarePicture.thumbnailUrl
+                  )}
+                  text={post.detail.topic.content}
+                />
+              )}
+            </List.Item.Detail.Metadata>
+          }
+        />
+      }
+    />
+  )
+}
+
+function Pager() {
+  const { lastPage, nextPage, toLatest } = useContext(FeedsContext)!
+  return (
+    <ActionPanel.Section>
+      <Action
+        icon="⬅️"
+        title="上一页"
+        shortcut={{ modifiers: ['opt'], key: 'arrowLeft' }}
+        onAction={lastPage}
+      />
+      <Action
+        icon="➡️"
+        title="下一页"
+        shortcut={{ modifiers: ['opt'], key: 'arrowRight' }}
+        onAction={nextPage}
+      />
+      <Action
+        icon="🎬"
+        title="查看最新"
+        shortcut={{ modifiers: ['opt', 'shift'], key: 'arrowLeft' }}
+        onAction={toLatest}
+      />
+    </ActionPanel.Section>
+  )
+}
+
+function CopyUpdate({ object }: { object: unknown }) {
+  return (
+    <Action.CopyToClipboard
+      title="复制动态 (JSON)"
+      shortcut={{ modifiers: ['opt', 'cmd'], key: 'c' }}
+      content={JSON.stringify(object, undefined, 2)}
     />
   )
 }
