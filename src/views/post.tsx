@@ -6,23 +6,28 @@ import {
   showToast,
   useNavigation,
 } from '@raycast/api'
-import { ApiOptions, JikeClient } from 'jike-sdk'
+import { ApiOptions } from 'jike-sdk'
+import { useState } from 'react'
 import { handleError } from '../utils/errors'
-import { useUsers } from '../hooks/user'
 import { UserSelect } from '../components/user-select'
+import { useClient, useUsers } from '../hooks/user'
+import { NoUser } from './no-user'
+import type { ConfigUser } from '../utils/config'
 
 export function Post() {
   const { pop } = useNavigation()
-  const { findUser } = useUsers()
+  const { noUser } = useUsers()
+  const [user, setUser] = useState<ConfigUser>()
+  const client = useClient(user)
 
-  const submit = async ({
-    userId,
-    content,
-  }: {
-    userId: string
-    content: string
-  }) => {
-    if (content.trim().length === 0) {
+  const submit = async ({ content }: { content: string }) => {
+    if (!user) {
+      await showToast({
+        title: '请选择用户',
+        style: Toast.Style.Failure,
+      })
+      return
+    } else if (content.trim().length === 0) {
       await showToast({
         title: '内容不能为空',
         style: Toast.Style.Failure,
@@ -30,10 +35,8 @@ export function Post() {
       return
     }
 
-    const user = findUser(userId)!
-    const client = JikeClient.fromJSON(user)
     try {
-      await client.createPost(ApiOptions.PostType.ORIGINAL, content)
+      await client!.createPost(ApiOptions.PostType.ORIGINAL, content)
     } catch (err) {
       handleError(err)
       return
@@ -46,7 +49,7 @@ export function Post() {
     pop()
   }
 
-  return (
+  return !noUser ? (
     <Form
       navigationTitle="发布动态"
       actions={
@@ -55,7 +58,7 @@ export function Post() {
         </ActionPanel>
       }
     >
-      <UserSelect />
+      <UserSelect onChange={setUser} />
 
       <Form.TextArea
         id="content"
@@ -64,5 +67,7 @@ export function Post() {
         autoFocus
       />
     </Form>
+  ) : (
+    <NoUser />
   )
 }

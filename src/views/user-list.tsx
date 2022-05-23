@@ -1,37 +1,28 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Action, ActionPanel, Icon, List } from '@raycast/api'
+import { useEffect, useState } from 'react'
+import { ActionPanel, List } from '@raycast/api'
 import { useUsers } from '../hooks/user'
+import { loginNewUser } from '../actions/user'
 import { UserDetail } from './user-detail'
-import { Login } from './login'
 
 export function UserList() {
-  const { users, update } = useUsers()
+  const { users, reload, ready } = useUsers()
   const [loading, setLoading] = useState(false)
 
   const refreshList = async () => {
     setLoading(true)
-    await update().finally(() => setLoading(false))
+    await reload().finally(() => setLoading(false))
   }
 
   useEffect(() => {
-    refreshList()
-  }, [])
+    setLoading(!ready)
+  }, [ready])
 
-  const actions = [
-    <Action.Push
-      key="userUser"
-      title="登录新用户"
-      target={<Login />}
-      icon={Icon.Plus}
-      shortcut={{ modifiers: ['cmd'], key: 'n' }}
-    />,
-  ]
+  const actions = [loginNewUser]
 
-  const isEmpty = useMemo(() => users.length === 0, [users])
   return (
     <List
       isLoading={loading}
-      isShowingDetail={!isEmpty}
+      isShowingDetail={users.length > 0}
       navigationTitle="用户列表"
       actions={<ActionPanel>{...actions}</ActionPanel>}
     >

@@ -10,9 +10,10 @@ import {
 import { limit } from 'jike-sdk'
 import { useEffect, useMemo, useState } from 'react'
 import { UserSelect } from '../components/user-select'
-import { useClient, useUsers } from '../hooks/user'
+import { useUser, useUsers } from '../hooks/user'
 import { handleError } from '../utils/errors'
 import { openProfile } from '../actions/user'
+import { NoUser } from './no-user'
 import type { Entity, JikePostWithDetail } from 'jike-sdk'
 
 export interface LikeTopForm {
@@ -23,12 +24,11 @@ export interface LikeTopForm {
 
 export function LikeTop() {
   const { push } = useNavigation()
+  const { noUser } = useUsers()
 
-  const onSubmit = (form: LikeTopForm) => {
-    push(<LikeTopResult {...form} />)
-  }
+  const onSubmit = (form: LikeTopForm) => push(<LikeTopResult {...form} />)
 
-  return (
+  return !noUser ? (
     <Form
       navigationTitle="点赞排行榜"
       actions={
@@ -42,6 +42,8 @@ export function LikeTop() {
       <Form.TextField id="postCount" title="动态数量" defaultValue="0" />
       <Form.Description text="统计多少条最近发布的动态，0 为所有动态" />
     </Form>
+  ) : (
+    <NoUser />
   )
 }
 
@@ -55,6 +57,7 @@ function LikeTopResult({ userId, topCount, postCount }: LikeTopForm) {
   const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState<JikePostWithDetail[]>([])
   const [likeStat, setLikeStat] = useState<LikeStat[]>([])
+  const { client } = useUser(userId)
 
   const countRanking = useMemo(
     () =>
@@ -66,10 +69,6 @@ function LikeTopResult({ userId, topCount, postCount }: LikeTopForm) {
     [likeStat]
   )
   const getRanking = (count: number) => countRanking.indexOf(count) + 1
-
-  const { findUser } = useUsers()
-  const user = findUser(userId)
-  const { client } = useClient(user)
 
   const fetchResult = async (ab: AbortController) => {
     if (!client) return

@@ -8,17 +8,12 @@ export interface Config {
   users: ConfigUser[]
 }
 
+export const defaultConfig: Config = { users: [] }
 export const configPath = path.resolve(environment.supportPath, 'config.json')
 
-export const getConfig = async () => {
-  const defaultConfig: Config = { users: [] }
+export const readConfig = async () => {
   return (await readJSON<Config>(configPath)) || defaultConfig
 }
 
-export const updateConfig = async (
-  update: (cfg: Config) => void | Config | Promise<Config | void>
-) => {
-  let cfg = await getConfig()
-  cfg = (await update(cfg)) || cfg
-  await writeJSON(configPath, cfg)
-}
+export const writeConfig = async (config: Config) =>
+  writeJSON(configPath, config)

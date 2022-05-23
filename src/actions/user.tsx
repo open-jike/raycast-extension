@@ -1,4 +1,5 @@
 import { Action, ActionPanel, Icon, showHUD } from '@raycast/api'
+import { Login } from '../views/login'
 
 export const openProfile = (username: string) => [
   <Action.OpenInBrowser
@@ -25,3 +26,13 @@ export const openProfile = (username: string) => [
     />
   </ActionPanel.Submenu>,
 ]
+
+export const loginNewUser = (
+  <Action.Push
+    key="userUser"
+    title="登录新用户"
+    target={<Login />}
+    icon={Icon.Plus}
+    shortcut={{ modifiers: ['cmd'], key: 'n' }}
+  />
+)

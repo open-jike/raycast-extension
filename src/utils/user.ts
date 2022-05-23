@@ -1,10 +1,10 @@
 import type { ConfigUser } from './config'
 
-export const isSameUser = (left: ConfigUser, right: ConfigUser) =>
+export const isSameUser = (left: ConfigUser, right: ConfigUser | undefined) =>
   // left.endpointUrl === right.endpointUrl &&
-  left.userId === right.userId
+  left.userId === right?.userId
 
-export const findUser = (users: ConfigUser[], user: ConfigUser) => {
-  const index = users.findIndex((u) => isSameUser(user, u))
-  return [users[index], index] as const
-}
+export const getUserIndex = (
+  users: ConfigUser[],
+  user: ConfigUser | undefined
+) => users.findIndex((u) => isSameUser(u, user))

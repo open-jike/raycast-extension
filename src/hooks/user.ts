@@ -1,31 +1,67 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { JikeClient } from 'jike-sdk'
-import { getConfig } from '../utils/config'
+import { getUserIndex } from '../utils/user'
+import { useConfig } from './config'
 import type { ConfigUser } from '../utils/config'
 
 export function useUsers() {
-  const [users, setUsers] = useState<ConfigUser[]>([])
+  const { config, ready, setConfig, reload } = useConfig()
+  const { users } = config
+  const noUser = ready ? users.length === 0 : false
 
-  const update = () => getConfig().then((cfg) => setUsers(cfg.users))
+  const findUser = (userId: string) => users.find((u) => u.userId === userId)
 
-  const findUser = (userId: string) =>
-    useMemo(() => users.find((u) => u.userId === userId), [users])
-
-  useEffect(() => {
-    update()
-  }, [])
+  const setUsers = async (users: ConfigUser[]) =>
+    setConfig({ ...config, users })
 
   return {
+    ready,
     users,
-    update,
+    noUser,
+    reload,
     findUser,
+    setUsers,
   }
 }
 
-export function useClient(user?: ConfigUser) {
-  const client = useMemo(() => user && JikeClient.fromJSON(user), [user])
+export function useClient(user: ConfigUser): JikeClient
+export function useClient(user: ConfigUser | undefined): JikeClient | undefined
+export function useClient(
+  user: ConfigUser | undefined
+): JikeClient | undefined {
+  return useMemo(() => user && JikeClient.fromJSON(user), [user])
+}
+
+interface UseUser<isUser extends boolean = false> {
+  user: ConfigUser | (isUser extends true ? never : undefined)
+  client: JikeClient | (isUser extends true ? never : undefined)
+  setUser: (newUser: ConfigUser | undefined) => Promise<void>
+}
+export function useUser(userId: string): UseUser<false>
+export function useUser(user: ConfigUser): UseUser<true>
+export function useUser(userId: string | ConfigUser): UseUser<boolean> {
+  const { users, findUser, setUsers } = useUsers()
+  const user =
+    typeof userId === 'string'
+      ? useMemo(() => findUser(userId), [users, userId])
+      : userId
+  const client = useClient(user)
+  const index = useMemo(() => getUserIndex(users, user), [users, user])
+
+  const setUser = (newUser: ConfigUser | undefined) => {
+    if (index === -1) throw new Error('User not found')
+
+    if (newUser) {
+      users[index] = newUser
+    } else {
+      users.splice(index, 1)
+    }
+    return setUsers(users)
+  }
 
   return {
+    user,
     client,
+    setUser,
   }
 }

@@ -1,9 +1,9 @@
 import { popToRoot, useNavigation } from '@raycast/api'
 import { JikeClient } from 'jike-sdk'
 import { useMemo } from 'react'
-import { updateConfig } from '../../utils/config'
-import { isSameUser } from '../../utils/user'
+import { getUserIndex } from '../../utils/user'
 import { handleError } from '../../utils/errors'
+import { useUsers } from '../../hooks/user'
 import { FormEndpointInfo } from './form-endpoint-info'
 import { FormAuth } from './form-auth'
 import type { AuthForm } from './form-auth'
@@ -19,6 +19,7 @@ export function Login() {
 
 function Auth({ endpointInfo }: { endpointInfo: EndpointInfo }) {
   const client = useMemo(() => new JikeClient(endpointInfo), [endpointInfo])
+  const { users, setUsers } = useUsers()
 
   const onLogin = async ({
     areaCode,
@@ -36,15 +37,13 @@ function Auth({ endpointInfo }: { endpointInfo: EndpointInfo }) {
 
       const user = await client.toJSON()
 
-      // Save
-      await updateConfig(async (cfg) => {
-        const index = cfg.users.findIndex((_auth) => isSameUser(user, _auth))
-        if (index > -1) {
-          cfg.users[index] = user
-        } else {
-          cfg.users.push(user)
-        }
-      })
+      const idx = getUserIndex(users, user)
+      if (idx > -1) {
+        users[idx] = user
+      } else {
+        users.push(user)
+      }
+      setUsers(users)
 
       popToRoot()
       return user.screenName

@@ -8,14 +8,12 @@ import {
   confirmAlert,
   showToast,
 } from '@raycast/api'
-import { JikeClient } from 'jike-sdk'
 import { handleError } from '../utils/errors'
-import { updateConfig } from '../utils/config'
-import { findUser } from '../utils/user'
 import { openProfile } from '../actions/user'
-import type { ConfigUser } from '../utils/config'
+import { useUser } from '../hooks/user'
 import type { ReactNode } from 'react'
 import type { Entity } from 'jike-sdk'
+import type { ConfigUser } from '../utils/config'
 
 export interface UserDetailProps {
   user: ConfigUser
@@ -24,26 +22,25 @@ export interface UserDetailProps {
 }
 
 export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
+  const { client, setUser } = useUser(user)
   const [loading, setLoading] = useState(false)
   const [userProfile, setUserProfile] = useState<Entity.Profile>()
-  const client = useMemo(() => JikeClient.fromJSON(user), [user])
 
-  const refreshUser = async (user: ConfigUser) => {
+  const refreshUser = async () => {
     await showToast({
       title: '正在更新用户信息...',
       style: Toast.Style.Animated,
     })
     try {
       await client.renewToken()
-      await updateConfig((cfg) => {
-        const [newUser] = findUser(cfg.users, user)
-        newUser.accessToken = client.accessToken
-        newUser.refreshToken = client.refreshToken
-      })
     } catch (err) {
       handleError(err)
       return
     }
+
+    user.accessToken = client.accessToken
+    user.refreshToken = client.refreshToken
+    setUser(user)
 
     await showToast({
       title: '更新成功',
@@ -52,7 +49,7 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
     onRefresh()
   }
 
-  const logout = async (user: ConfigUser) => {
+  const logout = async () => {
     if (
       !(await confirmAlert({
         title: '您确定要注销此用户吗？',
@@ -61,10 +58,7 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
     )
       return
 
-    await updateConfig((cfg) => {
-      const [, index] = findUser(cfg.users, user)
-      cfg.users.splice(index, 1)
-    })
+    setUser(undefined)
     onRefresh()
   }
 
@@ -75,7 +69,7 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
       key="refresh"
       title="刷新认证信息"
       icon={Icon.ArrowClockwise}
-      onAction={() => refreshUser(user)}
+      onAction={refreshUser}
       shortcut={{ modifiers: ['cmd'], key: 'r' }}
     />,
 
@@ -83,7 +77,7 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
       key="logout"
       title="注销用户"
       icon={Icon.XmarkCircle}
-      onAction={() => logout(user)}
+      onAction={logout}
       shortcut={{ modifiers: ['cmd'], key: 'backspace' }}
     />,
 
