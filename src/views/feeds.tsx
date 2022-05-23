@@ -73,7 +73,12 @@ export function Feeds() {
 
     toLatest: () => {
       setLastKeys([])
-      setLastKey(undefined)
+      if (lastKey) setLastKey(undefined)
+      else
+        setLastKey(() => {
+          fetchFeeds()
+          return undefined
+        })
     },
   }
 
@@ -195,57 +200,55 @@ const UserInteract = ({
 )
 
 const OriginalPost = ({ post }: { post: JikePostWithDetail }) => {
-  const [liked, setLiked] = useState(post.detail.liked)
+  const [detail, setDetail] = useState(post.detail)
   const markdown = useMemo(
-    () => `${post.detail.content
+    () => `${detail.content
       .replaceAll('\n', '\n\n')
       .replaceAll(/([!#()*+.[\\\]_`{}-])/g, `\\$1`)}
 
-${post.detail.pictures
+${detail.pictures
   ?.map((picture: Entity.Picture) => `![图片](${picture.middlePicUrl})`)
   .join('\n\n')}`,
-    [post.detail.content, post.detail.pictures]
+    [detail.content, detail.pictures]
   )
 
-  const onLike = async () => {
+  const onAction = (action: 'like' | 'unlike') => async () => {
     try {
-      await post.like()
-      refreshLiked()
+      let { likeCount } = detail
+      if (action === 'like') {
+        await post.like()
+        likeCount++
+      } else {
+        await post.unlike()
+        likeCount--
+      }
+      setDetail({
+        ...detail,
+        liked: action === 'like',
+        likeCount,
+      })
       return true
     } catch (err) {
       handleError(err)
       return false
     }
   }
-
-  const onUnlike = async () => {
-    try {
-      await post.unlike()
-      refreshLiked()
-      return true
-    } catch (err) {
-      handleError(err)
-      return false
-    }
-  }
-
-  const refreshLiked = () => setLiked(post.detail.liked)
 
   return (
     <List.Item
-      icon={pictureWithCircle(post.detail.user.avatarImage.thumbnailUrl)}
-      title={post.detail.user.screenName}
-      subtitle={post.detail.content}
+      icon={pictureWithCircle(detail.user.avatarImage.thumbnailUrl)}
+      title={detail.user.screenName}
+      subtitle={detail.content}
       actions={
         <ActionPanel>
-          {liked ? (
-            <UnlikePost onAction={onUnlike} />
+          {detail.liked ? (
+            <UnlikePost onAction={onAction('unlike')} />
           ) : (
-            <LikePost onAction={onLike} />
+            <LikePost onAction={onAction('like')} />
           )}
           <OpenPost type={ApiOptions.PostType.ORIGINAL} id={post.id} />
           <Pager />
-          <CopyUpdate object={post.detail} />
+          <CopyUpdate object={detail} />
         </ActionPanel>
       }
       detail={
@@ -253,15 +256,23 @@ ${post.detail.pictures
           markdown={markdown}
           metadata={
             <List.Item.Detail.Metadata>
-              {post.detail.topic && (
+              {detail.topic && (
                 <List.Item.Detail.Metadata.Label
                   title="圈子"
                   icon={pictureWithCircle(
-                    post.detail.topic.squarePicture.thumbnailUrl
+                    detail.topic.squarePicture.thumbnailUrl
                   )}
-                  text={post.detail.topic.content}
+                  text={detail.topic.content}
                 />
               )}
+              <List.Item.Detail.Metadata.Label
+                title="点赞 / 评论"
+                text={`👍 ${detail.likeCount} / 💬 ${detail.commentCount}`}
+              />
+              <List.Item.Detail.Metadata.Label
+                title="转帖 / 分享"
+                text={`↪️ ${detail.repostCount} / 🚀 ${detail.shareCount}`}
+              />
             </List.Item.Detail.Metadata>
           }
         />
