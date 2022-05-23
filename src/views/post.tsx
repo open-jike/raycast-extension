@@ -10,7 +10,7 @@ import { ApiOptions } from 'jike-sdk'
 import { useState } from 'react'
 import { handleError } from '../utils/errors'
 import { UserSelect } from '../components/user-select'
-import { useClient, useUsers } from '../hooks/user'
+import { useUser, useUsers } from '../hooks/user'
 import { NoUser } from './no-user'
 import type { ConfigUser } from '../utils/config'
 
@@ -18,7 +18,8 @@ export function Post() {
   const { pop } = useNavigation()
   const { noUser } = useUsers()
   const [user, setUser] = useState<ConfigUser>()
-  const client = useClient(user)
+  const { client } = useUser(user)
+  const [loading, setLoading] = useState(false)
 
   const submit = async ({ content }: { content: string }) => {
     if (!user) {
@@ -35,11 +36,14 @@ export function Post() {
       return
     }
 
+    setLoading(true)
     try {
       await client!.createPost(ApiOptions.PostType.ORIGINAL, content)
     } catch (err) {
       handleError(err)
       return
+    } finally {
+      setLoading(false)
     }
 
     await showToast({
@@ -51,6 +55,7 @@ export function Post() {
 
   return !noUser ? (
     <Form
+      isLoading={loading}
       navigationTitle="发布动态"
       actions={
         <ActionPanel>
@@ -64,7 +69,6 @@ export function Post() {
         id="content"
         title="内容"
         placeholder="请输入要发送的内容"
-        autoFocus
       />
     </Form>
   ) : (

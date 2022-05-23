@@ -1,11 +1,12 @@
 import { popToRoot, useNavigation } from '@raycast/api'
 import { JikeClient } from 'jike-sdk'
 import { useMemo } from 'react'
-import { getUserIndex } from '../../utils/user'
+import { getUserIndex, toJSON } from '../../utils/user'
 import { handleError } from '../../utils/errors'
 import { useUsers } from '../../hooks/user'
 import { FormEndpointInfo } from './form-endpoint-info'
 import { FormAuth } from './form-auth'
+import type { ConfigUser } from '../../utils/config'
 import type { AuthForm } from './form-auth'
 import type { EndpointInfo } from './form-endpoint-info'
 
@@ -35,8 +36,7 @@ function Auth({ endpointInfo }: { endpointInfo: EndpointInfo }) {
         await client.loginWithSmsCode(areaCode, mobile, smsCode)
       }
 
-      const user = await client.toJSON()
-
+      const user: ConfigUser = await toJSON(client)
       const idx = getUserIndex(users, user)
       if (idx > -1) {
         users[idx] = user

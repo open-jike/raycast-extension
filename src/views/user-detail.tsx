@@ -3,6 +3,7 @@ import {
   Action,
   ActionPanel,
   Icon,
+  Image,
   List,
   Toast,
   confirmAlert,
@@ -22,9 +23,9 @@ export interface UserDetailProps {
 }
 
 export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
-  const { client, setUser } = useUser(user)
+  const { client, setUser, update } = useUser(user)
   const [loading, setLoading] = useState(false)
-  const [userProfile, setUserProfile] = useState<Entity.Profile>()
+  const [profile, setProfile] = useState<Entity.Profile>()
 
   const refreshUser = async () => {
     await showToast({
@@ -33,20 +34,16 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
     })
     try {
       await client.renewToken()
+      await refreshProfile()
     } catch (err) {
       handleError(err)
       return
     }
 
-    user.accessToken = client.accessToken
-    user.refreshToken = client.refreshToken
-    setUser(user)
-
     await showToast({
       title: '更新成功',
       style: Toast.Style.Success,
     })
-    onRefresh()
   }
 
   const logout = async () => {
@@ -100,37 +97,47 @@ export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
     </ActionPanel.Section>,
   ]
 
-  useEffect(() => {
+  const refreshProfile = async () => {
     setLoading(true)
-    client
-      .getSelf()
-      .queryProfile()
-      .then((profile) => setUserProfile(profile.user))
-      .catch((err) => handleError(err))
-      .finally(() => setLoading(false))
-  }, [client])
+    try {
+      const profile = await client.getSelf().queryProfile()
+      setProfile(profile.user)
+      update()
+    } catch (err) {
+      handleError(err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  const markdown = userProfile
+  useEffect(() => {
+    refreshProfile()
+  }, [user.userId])
+
+  const markdown = profile
     ? `
-<img width="128" src="${userProfile.avatarImage.picUrl}"/>
+<img width="128" src="${profile.avatarImage.picUrl}"/>
 
 个性签名
 
 \`\`\`
-${userProfile.bio}
+${profile.bio}
 \`\`\`
 `
     : undefined
   const gender = useMemo(
-    () =>
-      ({ undefined, MALE: '男', FEMALE: '女' }[String(userProfile?.gender)]),
-    [userProfile?.gender]
+    () => ({ undefined, MALE: '男', FEMALE: '女' }[String(profile?.gender)]),
+    [profile?.gender]
   )
   return (
     <List.Item
       key={user.userId}
-      icon={userProfile?.avatarImage.thumbnailUrl || Icon.Person}
-      title={user.screenName}
+      icon={{
+        source:
+          profile?.avatarImage.thumbnailUrl || user.avatarImage || Icon.Person,
+        mask: Image.Mask.Circle,
+      }}
+      title={user.screenName || user.screenName}
       actions={
         <ActionPanel>
           {...itemActions(user)}
@@ -142,50 +149,48 @@ ${userProfile.bio}
           isLoading={loading}
           markdown={markdown}
           metadata={
-            userProfile ? (
+            profile ? (
               <List.Item.Detail.Metadata>
                 <List.Item.Detail.Metadata.Label
                   title="用户 ID"
-                  text={userProfile.id}
+                  text={profile.id}
                   icon="🆔"
                 />
                 <List.Item.Detail.Metadata.Label
                   title="用户名"
-                  text={userProfile.username}
+                  text={profile.username}
                 />
                 <List.Item.Detail.Metadata.Label
                   title="昵称"
-                  text={userProfile.screenName}
+                  text={profile.screenName}
                 />
                 {gender && (
                   <List.Item.Detail.Metadata.Label title="性别" text={gender} />
                 )}
-                {userProfile.birthday && (
+                {profile.birthday && (
                   <List.Item.Detail.Metadata.Label
                     title="生日"
-                    text={userProfile.birthday}
+                    text={profile.birthday}
                     icon="🎂"
                   />
                 )}
                 <List.Item.Detail.Metadata.Label
                   title="动态信息"
-                  text={`动态获得 ${userProfile.statsCount.liked} 次赞，获得 ${userProfile.statsCount.highlightedPersonalUpdates} 次精选`}
+                  text={`动态获得 ${profile.statsCount.liked} 次赞，获得 ${profile.statsCount.highlightedPersonalUpdates} 次精选`}
                   icon="✨"
                 />
-                {userProfile.profileVisitInfo && (
+                {profile.profileVisitInfo && (
                   <>
                     <List.Item.Detail.Metadata.Label
                       title="今日访客"
-                      text={`${userProfile.profileVisitInfo.todayCount} 个`}
+                      text={`${profile.profileVisitInfo.todayCount} 个`}
                       icon={Icon.Person}
                     />
                     <List.Item.Detail.Metadata.Label
                       title="最后访客"
-                      text={
-                        userProfile.profileVisitInfo.latestVisitor.screenName
-                      }
+                      text={profile.profileVisitInfo.latestVisitor.screenName}
                       icon={
-                        userProfile.profileVisitInfo.latestVisitor.avatarImage
+                        profile.profileVisitInfo.latestVisitor.avatarImage
                           .thumbnailUrl
                       }
                     />
@@ -196,22 +201,22 @@ ${userProfile.bio}
 
                 <List.Item.Detail.Metadata.Label
                   title="关注"
-                  text={String(userProfile.statsCount.followingCount)}
+                  text={String(profile.statsCount.followingCount)}
                 />
                 <List.Item.Detail.Metadata.Label
                   title="被关注"
-                  text={String(userProfile.statsCount.followedCount)}
+                  text={String(profile.statsCount.followedCount)}
                 />
                 <List.Item.Detail.Metadata.Label
                   title="夸夸"
-                  text={String(userProfile.statsCount.respectedCount)}
+                  text={String(profile.statsCount.respectedCount)}
                   icon="👍"
                 />
 
                 <List.Item.Detail.Metadata.Separator />
 
                 <List.Item.Detail.Metadata.Label title="标签" icon="🏷️" />
-                {userProfile.profileTags.map((tag, idx) => (
+                {profile.profileTags.map((tag, idx) => (
                   <List.Item.Detail.Metadata.Label
                     key={idx}
                     title=""
