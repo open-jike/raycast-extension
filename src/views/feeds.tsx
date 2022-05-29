@@ -1,4 +1,12 @@
-import { Action, ActionPanel, Icon, List, Toast, showToast } from '@raycast/api'
+import {
+  Action,
+  ActionPanel,
+  Icon,
+  List,
+  Toast,
+  open,
+  showToast,
+} from '@raycast/api'
 import { ApiOptions, JikePostWithDetail, limit } from 'jike-sdk'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useUser } from '../hooks/user'
@@ -200,7 +208,8 @@ const UserInteract = ({
 )
 
 const OriginalPost = ({ post }: { post: JikePostWithDetail }) => {
-  const [detail, setDetail] = useState(post.detail)
+  // TODO: repost
+  const [detail, setDetail] = useState(post.detail as Entity.OriginalPost)
   const markdown = useMemo(
     () => `${detail.content
       .replaceAll('\n', '\n\n')
@@ -208,7 +217,13 @@ const OriginalPost = ({ post }: { post: JikePostWithDetail }) => {
 
 ${detail.pictures
   ?.map((picture: Entity.Picture) => `![图片](${picture.middlePicUrl})`)
-  .join('\n\n')}`,
+  .join('\n\n')}
+
+${
+  detail.linkInfo
+    ? `[ <img height="16" src="${detail.linkInfo.pictureUrl}"/> ${detail.linkInfo.title}](${detail.linkInfo.linkUrl})`
+    : ''
+}`,
     [detail.content, detail.pictures]
   )
 
@@ -233,6 +248,11 @@ ${detail.pictures
       return false
     }
   }
+  const openImage = async () => {
+    for (const pic of detail.pictures ?? []) {
+      await open(pic.picUrl)
+    }
+  }
 
   return (
     <List.Item
@@ -245,6 +265,14 @@ ${detail.pictures
             <UnlikePost onAction={onAction('unlike')} />
           ) : (
             <LikePost onAction={onAction('like')} />
+          )}
+          {(detail.pictures ?? []).length > 0 && (
+            <Action
+              title="打开图片"
+              icon={Icon.Document}
+              shortcut={{ modifiers: ['cmd', 'shift'], key: 'o' }}
+              onAction={openImage}
+            />
           )}
           <OpenPost type={ApiOptions.PostType.ORIGINAL} id={post.id} />
           <Pager />
