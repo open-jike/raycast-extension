@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "openjike",
   "title": "OpenJike",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "icon": "command-icon.png",
   "license": "MIT",
