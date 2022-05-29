@@ -49,7 +49,14 @@ export const LikePost = ({
       style: Toast.Style.Success,
     })
   }
-  return <Action icon="👍" title="点赞" onAction={action} />
+  return (
+    <Action
+      icon="👍"
+      title="点赞"
+      shortcut={{ modifiers: ['cmd'], key: 'l' }}
+      onAction={action}
+    />
+  )
 }
 
 export const UnlikePost = ({
@@ -68,5 +75,12 @@ export const UnlikePost = ({
       style: Toast.Style.Success,
     })
   }
-  return <Action icon="💔" title="取消点赞" onAction={action} />
+  return (
+    <Action
+      icon="💔"
+      title="取消点赞"
+      shortcut={{ modifiers: ['cmd', 'opt'], key: 'l' }}
+      onAction={action}
+    />
+  )
 }
