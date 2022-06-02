@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ActionPanel, List } from '@raycast/api'
 import { useUsers } from '../hooks/user'
 import { LoginNewUser } from '../components/actions/user'
 import { UserDetail } from './user-detail'
 
-export function UserList() {
+export const UserList: React.FC = () => {
   const { users, reload, ready } = useUsers()
   const [loading, setLoading] = useState(false)
 

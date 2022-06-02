@@ -8,7 +8,13 @@ import {
   showToast,
 } from '@raycast/api'
 import { ApiOptions, JikePostWithDetail, limit } from 'jike-sdk'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useUser } from '../hooks/user'
 import { handleError } from '../utils/errors'
 import { OpenProfile } from '../components/actions/user'
@@ -25,7 +31,7 @@ interface FeedsCtx {
 
 const FeedsContext = createContext<FeedsCtx | undefined>(undefined)
 
-export function Feeds() {
+export const Feeds: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState('')
   const { users, client } = useUser(userId)
@@ -138,7 +144,10 @@ export function Feeds() {
   )
 }
 
-const NotSupported = ({ type, object }: { type: string; object: unknown }) => (
+const NotSupported: React.FC<{ type: string; object: unknown }> = ({
+  type,
+  object,
+}) => (
   <List.Item
     title={`暂不支持 ${type}`}
     actions={
@@ -150,7 +159,9 @@ const NotSupported = ({ type, object }: { type: string; object: unknown }) => (
   />
 )
 
-const PersonalUpdate = ({ update }: { update: Entity.PersonalUpdate }) => {
+const PersonalUpdate: React.FC<{ update: Entity.PersonalUpdate }> = ({
+  update,
+}) => {
   switch (update.action) {
     case 'USER_FOLLOW':
       return <UserInteract update={update} title="关注了即友" />
@@ -161,13 +172,10 @@ const PersonalUpdate = ({ update }: { update: Entity.PersonalUpdate }) => {
   }
 }
 
-const UserInteract = ({
-  update,
-  title,
-}: {
+const UserInteract: React.FC<{
   update: Entity.PersonalUpdate
   title: string
-}) => (
+}> = ({ update, title }) => (
   <List.Item
     icon={pictureWithCircle(update.users[0].avatarImage.thumbnailUrl)}
     title={update.users[0].screenName}
@@ -207,7 +215,7 @@ const UserInteract = ({
   />
 )
 
-const OriginalPost = ({ post }: { post: JikePostWithDetail }) => {
+const OriginalPost: React.FC<{ post: JikePostWithDetail }> = ({ post }) => {
   // TODO: repost
   const [detail, setDetail] = useState(post.detail as Entity.OriginalPost)
   const markdown = useMemo(
@@ -309,7 +317,7 @@ ${
   )
 }
 
-function Pager() {
+const Pager: React.FC = () => {
   const { lastPage, nextPage, toLatest } = useContext(FeedsContext)!
   return (
     <ActionPanel.Section>
@@ -335,7 +343,7 @@ function Pager() {
   )
 }
 
-function CopyUpdate({ object }: { object: unknown }) {
+const CopyUpdate: React.FC<{ object: unknown }> = ({ object }) => {
   return (
     <Action.CopyToClipboard
       title="复制动态 (JSON)"

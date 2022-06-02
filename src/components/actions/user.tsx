@@ -1,14 +1,12 @@
+import React from 'react'
 import { Action, ActionPanel, Icon } from '@raycast/api'
 import { Login } from '../../views/login'
 import { OpenInBrowser } from './common'
 
-export const OpenProfile = ({
-  username,
-  split = true,
-}: {
+export const OpenProfile: React.FC<{
   username: string
   split?: boolean
-}) => {
+}> = ({ username, split = true }) => {
   const macOS = (
     <OpenInBrowser
       key="open-macos"
@@ -52,7 +50,7 @@ export const OpenProfile = ({
   )
 }
 
-export const LoginNewUser = () => (
+export const LoginNewUser: React.FC = () => (
   <Action.Push
     key="login"
     title="登录新用户"

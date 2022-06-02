@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import {
   Action,
   ActionPanel,
@@ -7,14 +8,13 @@ import {
   useNavigation,
 } from '@raycast/api'
 import { ApiOptions } from 'jike-sdk'
-import { useState } from 'react'
 import { handleError } from '../utils/errors'
 import { UserSelect } from '../components/user-select'
 import { useUser, useUsers } from '../hooks/user'
 import { NoUser } from './no-user'
 import type { ConfigUser } from '../utils/config'
 
-export function Post() {
+export const Post: React.FC = () => {
   const { pop } = useNavigation()
   const { noUser } = useUsers()
   const [user, setUser] = useState<ConfigUser>()

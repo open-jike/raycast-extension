@@ -1,4 +1,5 @@
 import { Action, ActionPanel, Form } from '@raycast/api'
+import React from 'react'
 
 export interface EndpointInfo {
   userAgent: string
@@ -9,11 +10,9 @@ export interface EndpointInfo {
   endpointId: string
 }
 
-export function FormEndpointInfo({
-  onSubmit,
-}: {
+export const FormEndpointInfo: React.FC<{
   onSubmit: (info: EndpointInfo) => void
-}) {
+}> = ({ onSubmit }) => {
   return (
     <Form
       navigationTitle="配置 Endpoint 信息"

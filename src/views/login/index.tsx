@@ -1,6 +1,6 @@
+import React, { useMemo } from 'react'
 import { popToRoot, useNavigation } from '@raycast/api'
 import { JikeClient } from 'jike-sdk'
-import { useMemo } from 'react'
 import { getUserIndex, toJSON } from '../../utils/user'
 import { handleError } from '../../utils/errors'
 import { useUsers } from '../../hooks/user'
@@ -10,7 +10,7 @@ import type { ConfigUser } from '../../utils/config'
 import type { AuthForm } from './form-auth'
 import type { EndpointInfo } from './form-endpoint-info'
 
-export function Login() {
+export const Login: React.FC = () => {
   const { push } = useNavigation()
 
   return (
@@ -18,7 +18,7 @@ export function Login() {
   )
 }
 
-function Auth({ endpointInfo }: { endpointInfo: EndpointInfo }) {
+const Auth: React.FC<{ endpointInfo: EndpointInfo }> = ({ endpointInfo }) => {
   const client = useMemo(() => new JikeClient(endpointInfo), [endpointInfo])
   const { users, setUsers } = useUsers()
 

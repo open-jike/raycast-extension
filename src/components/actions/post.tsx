@@ -3,12 +3,9 @@ import { Action, Toast, showToast } from '@raycast/api'
 import { ApiOptions } from 'jike-sdk'
 import { OpenInBrowser } from './common'
 
-export const OpenPost = ({
+export const OpenPost: React.FC<{ type: ApiOptions.PostType; id: string }> = ({
   type,
   id,
-}: {
-  type: ApiOptions.PostType
-  id: string
 }) => {
   const webType = useMemo(
     () => (type === ApiOptions.PostType.ORIGINAL ? 'originalPost' : 'repost'),
@@ -33,11 +30,9 @@ export const OpenPost = ({
   )
 }
 
-export const LikePost = ({
-  onAction,
-}: {
+export const LikePost: React.FC<{
   onAction: () => Promise<boolean> | boolean
-}) => {
+}> = ({ onAction }) => {
   const action = async () => {
     showToast({
       title: '操作中',
@@ -59,11 +54,9 @@ export const LikePost = ({
   )
 }
 
-export const UnlikePost = ({
-  onAction,
-}: {
+export const UnlikePost: React.FC<{
   onAction: () => Promise<boolean> | boolean
-}) => {
+}> = ({ onAction }) => {
   const action = async () => {
     showToast({
       title: '操作中',

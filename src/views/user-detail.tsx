@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Action,
   ActionPanel,
@@ -22,7 +22,11 @@ export interface UserDetailProps {
   onRefresh: () => void
 }
 
-export function UserDetail({ user, actions, onRefresh }: UserDetailProps) {
+export const UserDetail: React.FC<UserDetailProps> = ({
+  user,
+  actions,
+  onRefresh,
+}) => {
   const { client, setUser, update } = useUser(user)
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState<Entity.Profile>()

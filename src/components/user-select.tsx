@@ -1,14 +1,15 @@
+import React from 'react'
 import { Form, Icon } from '@raycast/api'
 import { useUsers } from '../hooks/user'
 import { pictureWithCircle } from '../utils/icon'
 import type { ConfigUser } from '../utils/config'
 
-export function UserSelect({
-  onChange,
-  ...props
-}: {
-  onChange?: (user: ConfigUser | undefined) => void
-} & Omit<Partial<Form.Dropdown.Props>, 'onChange'>) {
+export const UserSelect: React.FC<
+  { onChange?: (user: ConfigUser | undefined) => void } & Omit<
+    Partial<Form.Dropdown.Props>,
+    'onChange'
+  >
+> = ({ onChange, ...props }) => {
   const { users, findUser } = useUsers()
 
   const handleChange = (userId: string) => {

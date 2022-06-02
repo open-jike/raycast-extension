@@ -1,5 +1,5 @@
 import { Action, ActionPanel, Form, Toast, showToast } from '@raycast/api'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 export interface AuthForm {
   areaCode: string
@@ -14,7 +14,7 @@ export interface FormAuthProps {
   onLogin: (form: AuthForm) => Promise<string | undefined>
 }
 
-export function FormAuth({ onSendSMS, onLogin }: FormAuthProps) {
+export const FormAuth: React.FC<FormAuthProps> = ({ onSendSMS, onLogin }) => {
   const [loginMethod, setLoginMethod] =
     useState<AuthForm['loginMethod']>('password')
   const [isSentSMS, setIsSentSMS] = useState(false)

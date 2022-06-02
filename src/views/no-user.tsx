@@ -1,7 +1,8 @@
 import { ActionPanel, Detail } from '@raycast/api'
+import React from 'react'
 import { LoginNewUser } from '../components/actions/user'
 
-export function NoUser() {
+export const NoUser: React.FC = () => {
   const contents = `
 # 请先登录账号
 

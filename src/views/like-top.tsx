@@ -8,7 +8,7 @@ import {
   useNavigation,
 } from '@raycast/api'
 import { limit } from 'jike-sdk'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { UserSelect } from '../components/user-select'
 import { useUser, useUsers } from '../hooks/user'
 import { handleError } from '../utils/errors'
@@ -47,7 +47,11 @@ export function LikeTop() {
   )
 }
 
-function LikeTopResult({ userId, topCount, postCount }: LikeTopForm) {
+const LikeTopResult: React.FC<LikeTopForm> = ({
+  userId,
+  topCount,
+  postCount,
+}) => {
   interface LikeStat {
     user: Entity.User
     count: number
