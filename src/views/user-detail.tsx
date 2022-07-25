@@ -133,13 +133,14 @@ ${profile.bio}
     () => ({ undefined, MALE: '男', FEMALE: '女' }[String(profile?.gender)]),
     [profile?.gender]
   )
+
   return (
     <List.Item
       key={user.userId}
       icon={pictureWithCircle(
         profile?.avatarImage.thumbnailUrl || user.avatarImage || Icon.Person
       )}
-      title={user.screenName || user.screenName}
+      title={user.screenName || profile?.screenName || ''}
       actions={
         <ActionPanel>
           {...itemActions(user)}
@@ -190,10 +191,10 @@ ${profile.bio}
                     />
                     <List.Item.Detail.Metadata.Label
                       title="最后访客"
-                      text={profile.profileVisitInfo.latestVisitor.screenName}
+                      text={profile.profileVisitInfo?.latestVisitor?.screenName}
                       icon={
-                        profile.profileVisitInfo.latestVisitor.avatarImage
-                          .thumbnailUrl
+                        profile.profileVisitInfo?.latestVisitor?.avatarImage
+                          ?.thumbnailUrl
                       }
                     />
                   </>
