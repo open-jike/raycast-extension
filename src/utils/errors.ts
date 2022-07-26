@@ -1,5 +1,5 @@
 import { Toast, showToast } from '@raycast/api'
-import { RequestFailureError } from 'jike-sdk'
+import { RequestFailureError } from 'jike-sdk/index'
 
 export const handleError = async (err: any) => {
   if (err instanceof RequestFailureError) {

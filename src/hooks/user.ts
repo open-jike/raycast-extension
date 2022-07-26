@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { JikeClient } from 'jike-sdk'
+import { JikeClient } from 'jike-sdk/index'
 import { getUserIndex, toJSON } from '../utils/user'
 import { useConfig } from './config'
 import type { ConfigUser } from '../utils/config'

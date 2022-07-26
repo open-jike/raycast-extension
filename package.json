@@ -57,7 +57,8 @@
   "dependencies": {
     "@raycast/api": "^1.38.2",
     "jike-sdk": "^0.19.4",
-    "react-use": "^17.4.0"
+    "react-use": "^17.4.0",
+    "undici": "^5.8.0"
   },
   "devDependencies": {
     "@sxzz/eslint-config-prettier": "^2.3.4",

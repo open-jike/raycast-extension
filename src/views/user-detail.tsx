@@ -13,7 +13,7 @@ import { OpenProfile } from '../components/actions/user'
 import { useUser } from '../hooks/user'
 import { pictureWithCircle } from '../utils/icon'
 import type { ReactNode } from 'react'
-import type { Entity } from 'jike-sdk'
+import type { Entity } from 'jike-sdk/index'
 import type { ConfigUser } from '../utils/config'
 
 export interface UserDetailProps {
@@ -63,43 +63,42 @@ export const UserDetail: React.FC<UserDetailProps> = ({
     onRefresh()
   }
 
-  const itemActions = (user: ConfigUser) => [
-    <OpenProfile username={user.username} />,
-
-    <Action
-      key="refresh"
-      title="刷新认证信息"
-      icon={Icon.ArrowClockwise}
-      onAction={refreshUser}
-      shortcut={{ modifiers: ['cmd'], key: 'r' }}
-    />,
-
-    <Action
-      key="logout"
-      title="注销用户"
-      icon={Icon.XmarkCircle}
-      onAction={logout}
-      shortcut={{ modifiers: ['cmd'], key: 'backspace' }}
-    />,
-
-    <ActionPanel.Section key="copy" title="复制">
-      <Action.CopyToClipboard title="昵称" content={user.screenName} />
-      <Action.CopyToClipboard
-        title="Access Token"
-        content={user.accessToken}
-        shortcut={{ modifiers: ['cmd', 'ctrl'], key: 'c' }}
+  const itemActions = (user: ConfigUser) => (
+    <>
+      <OpenProfile username={user.username} />
+      <Action
+        key="refresh"
+        title="刷新认证信息"
+        icon={Icon.ArrowClockwise}
+        onAction={refreshUser}
+        shortcut={{ modifiers: ['cmd'], key: 'r' }}
       />
-      <Action.CopyToClipboard
-        title="Refresh Token"
-        content={user.refreshToken}
+      <Action
+        key="logout"
+        title="注销用户"
+        icon={Icon.XMarkCircle}
+        onAction={logout}
+        shortcut={{ modifiers: ['cmd'], key: 'backspace' }}
       />
-      <Action.CopyToClipboard
-        title="详细数据 (JSON)"
-        content={JSON.stringify(user, undefined, 2)}
-        shortcut={{ modifiers: ['opt', 'cmd'], key: 'c' }}
-      />
-    </ActionPanel.Section>,
-  ]
+      <ActionPanel.Section key="copy" title="复制">
+        <Action.CopyToClipboard title="昵称" content={user.screenName} />
+        <Action.CopyToClipboard
+          title="Access Token"
+          content={user.accessToken}
+          shortcut={{ modifiers: ['cmd', 'ctrl'], key: 'c' }}
+        />
+        <Action.CopyToClipboard
+          title="Refresh Token"
+          content={user.refreshToken}
+        />
+        <Action.CopyToClipboard
+          title="详细数据 (JSON)"
+          content={JSON.stringify(user, undefined, 2)}
+          shortcut={{ modifiers: ['opt', 'cmd'], key: 'c' }}
+        />
+      </ActionPanel.Section>
+    </>
+  )
 
   const refreshProfile = async () => {
     setLoading(true)
@@ -143,8 +142,10 @@ ${profile.bio}
       title={user.screenName || profile?.screenName || ''}
       actions={
         <ActionPanel>
-          {...itemActions(user)}
-          {actions}
+          <>
+            {itemActions(user)}
+            {actions}
+          </>
         </ActionPanel>
       }
       detail={

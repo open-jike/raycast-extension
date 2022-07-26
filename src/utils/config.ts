@@ -1,7 +1,7 @@
 import path from 'path'
 import { environment } from '@raycast/api'
 import { readJSON, writeJSON } from './json'
-import type { JikeClientJSON } from 'jike-sdk'
+import type { JikeClientJSON } from 'jike-sdk/index'
 
 export interface ConfigUser extends JikeClientJSON {
   avatarImage: string

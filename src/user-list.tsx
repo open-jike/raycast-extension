@@ -1,3 +1,4 @@
+import { useInit } from './hooks/init'
 import { UserList } from './views/user-list'
 
-export default UserList
+export default useInit(UserList)

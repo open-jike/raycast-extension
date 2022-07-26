@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Action, Toast, showToast } from '@raycast/api'
-import { ApiOptions } from 'jike-sdk'
+import { ApiOptions } from 'jike-sdk/index'
 import { OpenInBrowser } from './common'
 
 export const OpenPost: React.FC<{ type: ApiOptions.PostType; id: string }> = ({

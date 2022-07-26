@@ -1,3 +1,4 @@
+import { useInit } from './hooks/init'
 import { Post } from './views/post'
 
-export default Post
+export default useInit(Post)

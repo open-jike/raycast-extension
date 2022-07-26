@@ -1,4 +1,4 @@
-import type { JikeClient } from 'jike-sdk'
+import type { JikeClient } from 'jike-sdk/index'
 import type { ConfigUser } from './config'
 
 export const isSameUser = (left: ConfigUser, right: ConfigUser | undefined) =>

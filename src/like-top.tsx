@@ -1,3 +1,4 @@
+import { useInit } from './hooks/init'
 import { LikeTop } from './views/like-top'
 
-export default LikeTop
+export default useInit(LikeTop)
