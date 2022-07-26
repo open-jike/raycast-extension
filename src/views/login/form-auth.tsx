@@ -40,6 +40,11 @@ export const FormAuth: React.FC<FormAuthProps> = ({ onSendSMS, onLogin }) => {
 
     setIsLoading(true)
 
+    showToast({
+      title: '登录中',
+      style: Toast.Style.Animated,
+    })
+
     const screenName = await onLogin(form).finally(() => setIsLoading(false))
     if (screenName)
       await showToast({

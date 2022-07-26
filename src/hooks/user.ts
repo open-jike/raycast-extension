@@ -1,7 +1,12 @@
 import { useEffect, useMemo } from 'react'
 import { JikeClient } from 'jike-sdk/index'
+import { ProxyAgent } from 'undici'
+// @ts-expect-error
+import fetch from 'undici/lib/fetch'
 import { getUserIndex, toJSON } from '../utils/user'
+import { getSystemProxy } from '../utils/network'
 import { useConfig } from './config'
+import type { BeforeRequestHook } from 'jike-sdk/index'
 import type { ConfigUser } from '../utils/config'
 
 export function useUsers() {
@@ -24,10 +29,30 @@ export function useUsers() {
   }
 }
 
+const beforeRequest: BeforeRequestHook = async (req: any, options) => {
+  const proxy = await getSystemProxy()
+  if (!proxy) return
+
+  let proxyUri: string | undefined
+  if (proxy?.https) proxyUri = `http://${proxy.https.addr}:${proxy.https.port}`
+  else if (proxy?.http)
+    proxyUri = `http://${proxy.http.addr}:${proxy.http.port}`
+  if (!proxyUri) return
+
+  // TODO
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+
+  const agent = new ProxyAgent(proxyUri)
+  ;(options as any).fetch = fetch.bind(agent)
+}
+
 function useClient(user: ConfigUser): JikeClient
 function useClient(user: ConfigUser | undefined): JikeClient | undefined
 function useClient(user: ConfigUser | undefined): JikeClient | undefined {
-  return useMemo(() => user && JikeClient.fromJSON(user), [user])
+  return useMemo(
+    () => user && JikeClient.fromJSON(user, { beforeRequest }),
+    [user]
+  )
 }
 
 interface UseUser<NeverEmpty extends boolean = false> {
