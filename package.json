@@ -3,14 +3,15 @@
   "name": "openjike",
   "title": "OpenJike",
   "version": "0.1.0",
-  "description": "",
+  "description": "Submit and browse posts of OpenJike.",
   "icon": "command-icon.png",
   "license": "MIT",
   "author": "sxzz",
   "categories": [
     "Applications",
     "Web",
-    "Communication"
+    "Communication",
+    "News"
   ],
   "commands": [
     {
