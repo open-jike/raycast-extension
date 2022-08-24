@@ -164,9 +164,10 @@ ${profile.bio}
                   title="用户名"
                   text={profile.username}
                 />
-                <List.Item.Detail.Metadata.Label
+                <List.Item.Detail.Metadata.Link
                   title="昵称"
                   text={profile.screenName}
+                  target={`https://web.okjike.com/u/${profile.username}`}
                 />
                 {gender && (
                   <List.Item.Detail.Metadata.Label title="性别" text={gender} />
@@ -219,15 +220,15 @@ ${profile.bio}
 
                 <List.Item.Detail.Metadata.Separator />
 
-                <List.Item.Detail.Metadata.Label title="标签" icon="🏷️" />
-                {profile.profileTags.map((tag, idx) => (
-                  <List.Item.Detail.Metadata.Label
-                    key={idx}
-                    title=""
-                    text={tag.text}
-                    icon={tag.picUrl}
-                  />
-                ))}
+                <List.Item.Detail.Metadata.TagList title="">
+                  {profile.profileTags.map((tag, idx) => (
+                    <List.Item.Detail.Metadata.TagList.Item
+                      key={idx}
+                      text={tag.text}
+                      icon={tag.picUrl}
+                    />
+                  ))}
+                </List.Item.Detail.Metadata.TagList>
 
                 <List.Item.Detail.Metadata.Separator />
 
