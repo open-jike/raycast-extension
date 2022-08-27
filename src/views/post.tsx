@@ -3,6 +3,7 @@ import {
   Action,
   ActionPanel,
   Form,
+  Icon,
   Toast,
   showToast,
   useNavigation,
@@ -12,12 +13,15 @@ import { handleError } from '../utils/errors'
 import { UserSelect } from '../components/user-select'
 import { useUser, useUsers } from '../hooks/user'
 import { NoUser } from './no-user'
+import { ChooseTopic } from './choose-topic'
+import type { Entity } from 'jike-sdk'
 import type { ConfigUser } from '../utils/config'
 
 export const Post: React.FC = () => {
   const { pop } = useNavigation()
   const { noUser } = useUsers()
   const [user, setUser] = useState<ConfigUser>()
+  const [topic, setTopic] = useState<Entity.Topic>()
   const { client } = useUser(user)
   const [loading, setLoading] = useState(false)
 
@@ -38,7 +42,9 @@ export const Post: React.FC = () => {
 
     setLoading(true)
     try {
-      await client!.createPost(ApiOptions.PostType.ORIGINAL, content)
+      await client!.createPost(ApiOptions.PostType.ORIGINAL, content, {
+        topicId: topic?.id,
+      })
     } catch (err) {
       handleError(err)
       return
@@ -59,7 +65,32 @@ export const Post: React.FC = () => {
       navigationTitle="发布动态"
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Submit" onSubmit={submit} />
+          <Action.SubmitForm
+            title="Submit"
+            onSubmit={submit}
+            icon={Icon.Upload}
+          />
+          {user && (
+            <Action.Push
+              title="Choose Topic"
+              target={
+                <ChooseTopic
+                  user={user}
+                  onSelect={(topic) => setTopic(topic)}
+                />
+              }
+              icon={Icon.Bubble}
+              shortcut={{ modifiers: ['cmd'], key: 't' }}
+            />
+          )}
+          {topic && (
+            <Action
+              title="Clear Topic"
+              icon={Icon.Trash}
+              onAction={() => setTopic(undefined)}
+              shortcut={{ modifiers: ['cmd', 'opt'], key: 't' }}
+            />
+          )}
         </ActionPanel>
       }
     >
@@ -70,6 +101,17 @@ export const Post: React.FC = () => {
         title="内容"
         placeholder="请输入要发送的内容"
       />
+
+      {
+        <Form.Description
+          title="圈子"
+          text={
+            topic
+              ? topic.content
+              : `⛔️ 未选择圈子（需通过右下角的命令面板选择 ⌘T）`
+          }
+        />
+      }
     </Form>
   ) : (
     <NoUser />
