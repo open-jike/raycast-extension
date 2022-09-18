@@ -2,10 +2,9 @@
 
 Submit and browse posts of OpenJike, powered by [jike-sdk](https://github.com/open-jike/jike-sdk).
 
-Main repo: https://github.com/open-jike/raycast-extension
-
 鉴于目前 Raycast Store 的[种种槽点](https://twitter.com/sanxiaozhizi/status/1553977488896065536)
-，且[不支持上架中文扩展](https://github.com/raycast/extensions/pull/2433#issuecomment-1217498786)，本项目需要自行构建。
+，且[不支持上架中文扩展](https://github.com/raycast/extensions/pull/2433#issuecomment-1217498786)，
+本项目需要自行构建。
 
 ## Sponsors
 

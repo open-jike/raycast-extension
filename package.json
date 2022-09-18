@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "description": "Submit and browse posts of OpenJike.",
   "icon": "command-icon.png",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "author": "sxzz",
   "categories": [
     "Applications",
