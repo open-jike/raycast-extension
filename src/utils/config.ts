@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { environment } from '@raycast/api'
 import { readJSON, writeJSON } from './json'
-import type { JikeClientJSON } from 'jike-sdk/index'
+import type { JikeClientJSON } from 'jike-sdk/polyfill'
 
 export interface ConfigUser extends JikeClientJSON {
   avatarImage: string
@@ -17,5 +17,4 @@ export const readConfig = async () => {
   return (await readJSON<Config>(configPath)) || defaultConfig
 }
 
-export const writeConfig = async (config: Config) =>
-  writeJSON(configPath, config)
+export const writeConfig = (config: Config) => writeJSON(configPath, config)

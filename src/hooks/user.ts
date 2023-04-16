@@ -1,12 +1,12 @@
 import { useEffect, useMemo } from 'react'
-import { JikeClient } from 'jike-sdk/index'
+import { JikeClient } from 'jike-sdk/polyfill'
 import { ProxyAgent } from 'undici'
 // @ts-expect-error
 import fetch from 'undici/lib/fetch'
 import { getUserIndex, toJSON } from '../utils/user'
 import { getSystemProxy } from '../utils/network'
 import { useConfig } from './config'
-import type { BeforeRequestHook } from 'jike-sdk/index'
+import type { BeforeRequestHook } from 'jike-sdk/polyfill'
 import type { ConfigUser } from '../utils/config'
 
 export function useUsers() {
@@ -16,8 +16,7 @@ export function useUsers() {
 
   const findUser = (userId: string) => users.find((u) => u.userId === userId)
 
-  const setUsers = async (users: ConfigUser[]) =>
-    setConfig({ ...config, users })
+  const setUsers = (users: ConfigUser[]) => setConfig({ ...config, users })
 
   return {
     ready,

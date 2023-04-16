@@ -7,7 +7,7 @@ import {
   open,
   showToast,
 } from '@raycast/api'
-import { ApiOptions, JikePostWithDetail, limit } from 'jike-sdk/index'
+import { ApiOptions, JikePostWithDetail, limit } from 'jike-sdk/polyfill'
 import React, {
   createContext,
   useContext,
@@ -20,8 +20,8 @@ import { handleError } from '../utils/errors'
 import { OpenProfile } from '../components/actions/user'
 import { pictureWithCircle } from '../utils/icon'
 import { LikePost, OpenPost, UnlikePost } from '../components/actions/post'
-import type { FollowingUpdatesMoreKey } from 'jike-sdk/dist/client/types'
-import type { Entity, JikeClient } from 'jike-sdk/index'
+import type { FollowingUpdatesMoreKey } from 'jike-sdk'
+import type { Entity, JikeClient } from 'jike-sdk/polyfill'
 
 interface FeedsCtx {
   lastPage: () => void

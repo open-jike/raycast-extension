@@ -13,7 +13,7 @@ import { OpenProfile } from '../components/actions/user'
 import { useUser } from '../hooks/user'
 import { pictureWithCircle } from '../utils/icon'
 import type { ReactNode } from 'react'
-import type { Entity } from 'jike-sdk/index'
+import type { Entity } from 'jike-sdk/polyfill'
 import type { ConfigUser } from '../utils/config'
 
 export interface UserDetailProps {

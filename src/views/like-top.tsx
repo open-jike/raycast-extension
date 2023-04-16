@@ -7,14 +7,14 @@ import {
   showToast,
   useNavigation,
 } from '@raycast/api'
-import { limit } from 'jike-sdk/index'
+import { limit } from 'jike-sdk/polyfill'
 import React, { useEffect, useMemo, useState } from 'react'
 import { UserSelect } from '../components/user-select'
 import { useUser, useUsers } from '../hooks/user'
 import { handleError } from '../utils/errors'
 import { OpenProfile } from '../components/actions/user'
 import { NoUser } from './no-user'
-import type { Entity, JikePostWithDetail } from 'jike-sdk/index'
+import type { Entity, JikePostWithDetail } from 'jike-sdk/polyfill'
 
 export interface LikeTopForm {
   userId: string

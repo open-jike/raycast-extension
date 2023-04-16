@@ -8,7 +8,7 @@ import {
   showToast,
   useNavigation,
 } from '@raycast/api'
-import { ApiOptions } from 'jike-sdk/index'
+import { ApiOptions } from 'jike-sdk/polyfill'
 import { handleError } from '../utils/errors'
 import { UserSelect } from '../components/user-select'
 import { useUser, useUsers } from '../hooks/user'

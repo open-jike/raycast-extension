@@ -4,14 +4,14 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "lib": ["es2021"],
-    "module": "commonjs",
+    "module": "ESNext",
     "target": "es2021",
+    "moduleResolution": "bundler",
     "strict": true,
     "isolatedModules": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx",
-    "resolveJsonModule": true
+    "jsx": "react-jsx"
   }
 }

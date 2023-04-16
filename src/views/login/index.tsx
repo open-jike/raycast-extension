@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { popToRoot, useNavigation } from '@raycast/api'
-import { JikeClient } from 'jike-sdk/index'
+import { JikeClient } from 'jike-sdk/polyfill'
 import { getUserIndex, toJSON } from '../../utils/user'
 import { handleError } from '../../utils/errors'
 import { useUsers } from '../../hooks/user'
