@@ -3,7 +3,7 @@ lockfileVersion: '6.0'
 dependencies:
   '@raycast/api':
     specifier: ^1.49.3
-    version: 1.49.3(@types/node@18.8.3)(@types/react@18.0.9)
+    version: 1.49.3(@types/node@18.16.3)(@types/react@18.0.9)
   execa:
     specifier: ^7.1.1
     version: 7.1.1
@@ -25,8 +25,8 @@ devDependencies:
     specifier: ^2.4.6
     version: 2.4.6(eslint@8.38.0)(typescript@5.0.4)
   '@types/node':
-    specifier: 18.8.3
-    version: 18.8.3
+    specifier: 18.16.3
+    version: 18.16.3
   '@types/react':
     specifier: 18.0.9
     version: 18.0.9
@@ -151,7 +151,7 @@ packages:
       fastq: 1.15.0
     dev: true
 
-  /@raycast/api@1.49.3(@types/node@18.8.3)(@types/react@18.0.9):
+  /@raycast/api@1.49.3(@types/node@18.16.3)(@types/react@18.0.9):
     resolution: {integrity: sha512-h8OBaazNF52yE3JhJpmre7vjRD2xtlKojW9L+mK6eCfcPZDipVVlCs52Op6SxG5j9OFB2FpbGgyJLpwTYCglcA==}
     hasBin: true
     requiresBuild: true
@@ -164,7 +164,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/node': 18.8.3
+      '@types/node': 18.16.3
       '@types/react': 18.0.9
       react: 18.1.0
       react-reconciler: 0.28.0(react@18.1.0)
@@ -242,8 +242,8 @@ packages:
       '@types/unist': 2.0.6
     dev: true
 
-  /@types/node@18.8.3:
-    resolution: {integrity: sha512-0os9vz6BpGwxGe9LOhgP/ncvYN5Tx1fNcd2TM3rD/aCGBkysb+ZWpXEocG24h6ZzOi13+VB8HndAQFezsSOw1w==}
+  /@types/node@18.16.3:
+    resolution: {integrity: sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==}
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
